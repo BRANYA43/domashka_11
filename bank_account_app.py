@@ -68,10 +68,10 @@ class BankAccount:
         return self._balance
 
     def print_info(self):
-        print(f'Ім\'я: {self._name}\n'
-               f'ІД: {self._id}\n'
-               f'Баланс: {self._balance}\n'
-               f'Список транзакцій:')
+        print(f'Name: {self._name}\n'
+              f'ID: {self._id}\n'
+              f'Balance: {self._balance}\n'
+              f'List transaction:')
 
         for index, transaction in enumerate(self._transactions[:-10:-1]):
             transaction.print_info(len(self._transactions) - index)
