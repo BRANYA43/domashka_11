@@ -37,7 +37,6 @@ class Transaction:
             print('        !!!Insufficient funds for transaction!!!')
 
 
-
 class BankAccount:
     def __init__(self, name: str):
         self._name = name
