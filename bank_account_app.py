@@ -16,7 +16,6 @@
 
    * Дод. додати та враховувати банківські комісії (1%)
 """
-
 from decimal import Decimal
 from uuid import uuid1
 from datetime import datetime
@@ -32,8 +31,10 @@ class Transaction:
 
     def print_info(self, index):
         print(f'    {index}. {self.dt.strftime("%d.%m.%Y %H:%M:%S")}\n'
-              f'        Статус: {self.status}, Тип: {self.type}\n'
-              f'        Сумма: {self.amount}, Комісія: {self.commission}')
+              f'        Status: {self.status}, Type: {self.type}\n'
+              f'        Sum: {self.amount}, Commission: {self.commission}')
+        if self.status == 'Failed':
+            print('        !!!Insufficient funds for transaction!!!')
 
 
 
@@ -41,7 +42,7 @@ class BankAccount:
     def __init__(self, name: str):
         self._name = name
         self._id = uuid1()
-        self._balance = Decimal(0.00)
+        self._balance = Decimal(0)
         self._transactions = []
 
     def calculate_balance(self, transaction):
