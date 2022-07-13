@@ -1,28 +1,40 @@
 """
-Описати клас Банківсткий рахунокб атрибути якого:
-- ім'я олікового запису - str
-- унікальний id - uuid
-- баланс - float or Decimal
-Методи
-    депозит коштів
-    виведення коштів
-    отримання балансу
+Описати клас "Банківський рахунок", атрибути якого:
+
+   - ім'я облікового запису - str
+   - унікальний id (uuid)
+   - баланс float (чи Decimal)
+   - транзакції (список)
+   Методи
+
+     депозит коштів
+     виведення коштів
+     отримати баланс
+
+
+   При зміні балансу записувати в транзакції (сума, тип операції, поточна_дата)
+
+   * Дод. додати та враховувати банківські комісії (1%)
 """
 
 from decimal import Decimal
 from uuid import uuid1
 from datetime import datetime
-from random import randint
 
 
 class Transaction:
-    def __init__(self, amount: Decimal, _type: str):
+    def __init__(self, amount: Decimal, _type: str, status='Settled'):
         self.amount = amount
         self.type = _type
-        self.date = datetime.now().strftime('%d.%m.%Y')
+        self.status = status
+        self.commission = round(amount * Decimal(0.01), 2)
+        self.dt = datetime.now()
 
     def print_info(self, index):
-        print(f'    {index}. Гроші: {self.amount}, Операція: {self.type}, Дата: {self.date}')
+        print(f'    {index}. {self.dt.strftime("%d.%m.%Y %H:%M:%S")}\n'
+              f'        Статус: {self.status}, Тип: {self.type}\n'
+              f'        Сумма: {self.amount}, Комісія: {self.commission}')
+
 
 
 class BankAccount:
@@ -34,18 +46,22 @@ class BankAccount:
 
     def calculate_balance(self, transaction):
         operations = {
-            'Deposit': self._balance + transaction.amount,
-            'Withdrawal': self._balance - transaction.amount
+            'Deposit': self._balance + transaction.amount - transaction.commission,
+            'Withdrawal': self._balance - transaction.amount + transaction.commission
         }
         self._balance = operations[transaction.type]
 
     def deposit(self, amount: int | float):
-        self._transactions.append(Transaction(Decimal(amount), 'Deposit'))
+        self._transactions.append(Transaction(Decimal(str(round(amount, 2))), 'Deposit'))
         self.calculate_balance(self._transactions[-1])
 
     def withdrawal(self, amount: int | float):
-        self._transactions.append(Transaction(Decimal(amount), 'Withdrawal'))
-        self.calculate_balance(self._transactions[-1])
+        if self._balance - Decimal(amount) < 0:
+            self._transactions.append(
+                Transaction(Decimal(str(round(amount, 2))), 'Withdrawal', 'Failed'))
+        else:
+            self._transactions.append(Transaction(Decimal(str(round(amount, 2))), 'Withdrawal'))
+            self.calculate_balance(self._transactions[-1])
 
     @property
     def balance(self):
@@ -57,27 +73,17 @@ class BankAccount:
                f'Баланс: {self._balance}\n'
                f'Список транзакцій:')
 
-        for index, transaction in enumerate(self._transactions):
-            transaction.print_info(index)
+        for index, transaction in enumerate(self._transactions[:-10:-1]):
+            transaction.print_info(len(self._transactions) - index)
         print('*' * 20)
 
 
 def main():
     bogdan = BankAccount('Bogdan')
     bogdan.print_info()
-    for i in range(randint(10, 50)):
-        t_triger = randint(0, 1)
-        if t_triger == 0:
-            bogdan.deposit(randint(10, 1000))
-        else:
-            bogdan.withdrawal(randint(10, 1000))
-    bogdan.print_info()
-    for i in range(randint(10, 50)):
-        t_triger = randint(0, 1)
-        if t_triger == 0:
-            bogdan.deposit(randint(10, 1000))
-        else:
-            bogdan.withdrawal(randint(10, 1000))
+    bogdan.deposit(890.134215)
+    bogdan.withdrawal(277)
+    bogdan.withdrawal(10000)
     bogdan.print_info()
 
 
