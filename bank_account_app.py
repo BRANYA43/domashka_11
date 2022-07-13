@@ -23,7 +23,7 @@ from datetime import datetime
 
 class Transaction:
     def __init__(self, amount: Decimal, _type: str, status='Settled'):
-        self.amount = amount
+        self.amount = round(amount, 2)
         self.type = _type
         self.status = status
         self.commission = round(amount * Decimal(0.01), 2)
@@ -51,16 +51,16 @@ class BankAccount:
         }
         self._balance = operations[transaction.type]
 
-    def deposit(self, amount: int | float):
-        self._transactions.append(Transaction(Decimal(str(round(amount, 2))), 'Deposit'))
+    def deposit(self, amount: str):
+        self._transactions.append(Transaction(Decimal(amount), 'Deposit'))
         self.calculate_balance(self._transactions[-1])
 
-    def withdrawal(self, amount: int | float):
+    def withdrawal(self, amount: str):
         if self._balance - Decimal(amount) < 0:
             self._transactions.append(
-                Transaction(Decimal(str(round(amount, 2))), 'Withdrawal', 'Failed'))
+                Transaction(Decimal(amount), 'Withdrawal', 'Failed'))
         else:
-            self._transactions.append(Transaction(Decimal(str(round(amount, 2))), 'Withdrawal'))
+            self._transactions.append(Transaction(Decimal(amount), 'Withdrawal'))
             self.calculate_balance(self._transactions[-1])
 
     @property
@@ -81,9 +81,9 @@ class BankAccount:
 def main():
     bogdan = BankAccount('Bogdan')
     bogdan.print_info()
-    bogdan.deposit(890.134215)
-    bogdan.withdrawal(277)
-    bogdan.withdrawal(10000)
+    bogdan.deposit('890.134215')
+    bogdan.withdrawal('277.456579')
+    bogdan.withdrawal('10000')
     bogdan.print_info()
 
 
