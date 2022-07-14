@@ -55,7 +55,8 @@ class BankAccount:
     def calculate_balance(self, transaction):
         """Розраховує кошти залежно від типу транзакції та враховує комісію.
         При поповненні рахунку комісія знімаеться з коштів що додаються до разунку.
-        При виведенні коштів комісія знімаеться с рахунку користувача."""
+        При виведенні коштів комісія знімаеться с рахунку користувача.
+        """
         operations = {
             'Deposit': self._balance + transaction.amount - transaction.commission_calculated,
             'Withdrawal': self._balance - transaction.amount + transaction.commission_calculated
@@ -69,7 +70,8 @@ class BankAccount:
 
     def withdrawal(self, amount: str):
         """Виводить кошти з рахунку ствоюючи об'єкт транзакцій та зберігає у список транзакцій зі статусом Settled.
-        Також перевіряє чи можливо зняти грощі, якщо ні то додає цю транзакію у список зі статусом Failed."""
+        Також перевіряє чи можливо зняти грощі, якщо ні то додає цю транзакію у список зі статусом Failed.
+        """
         if self._balance - Decimal(amount) * Decimal(Transaction.COMMISION + '1') < 0:
             self._transactions.append(Transaction(Decimal(amount), 'Withdrawal', 'Failed'))
         else:
